@@ -661,6 +661,40 @@ If you have to set up the same dependency over and over, you should probably
 put that in a [test fixture][junitfixture] and put *assertIsSatisfied* in an
 *@After* fixture.
 
+### Mockito
+
+Mockito is an alternative to jMock.  It is more flexible than JMock and it
+encourages a concise style that uses static imports and annotations.  This
+style of test goes well with dependency injection frameworks like Spring.
+
+A typical mockito test looks like this:
+
+```java
+import org.mockito.runners.MockitoJUnitRunner;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class FooWidgetTest {
+    @Mock
+    FooWidgetDependency dep;
+    @InjectMocks
+    FooWidget foo;
+
+    @Test
+    public void basicTest() {
+        when(dep.callWithReturnValue(anyString())).thenReturn("value");
+        
+        Assert.assertTrue(foo.doThing());
+
+        verify(dep).call(anyString());
+    }
+}
+```
+
+As in the jMock example, this sets up a *FooWidgetDependency* mock, a *FooWidget*, and wires them
+together automatically.  The *when* call mocks the return value from the dependency and *verify*
+tests the expectation.
+
 ### AssertJ
 
 Do you ever do this with jUnit?
@@ -817,6 +851,7 @@ Resources to help you become a Java master.
 [junittheories]: https://github.com/junit-team/junit/wiki/Theories
 [junitassume]: https://github.com/junit-team/junit/wiki/Assumptions-with-assume
 [jmock]: http://jmock.org/
+[mockito]: http://mockito.org/
 [junitfixture]: https://github.com/junit-team/junit/wiki/Test-fixtures
 [initializingbean]: http://docs.spring.io/spring/docs/3.2.6.RELEASE/javadoc-api/org/springframework/beans/factory/InitializingBean.html
 [apachecommons]: http://commons.apache.org/
